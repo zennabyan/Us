@@ -1,0 +1,2353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Little Place for Us</title>
+<meta name="description" content="A little place on the internet made just for you." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600&family=Caveat:wght@500;600&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root{
+    --ivory:#FAF6EF;
+    --paper:#F3ECE2;
+    --blush:#D9AFAE;
+    --maroon:#6B2C3E;
+    --maroon-deep:#4E1F2C;
+    --ink:#3A2E28;
+    --rose:#8B7267;
+    --serif:'Cormorant Garamond', serif;
+    --sans:'Manrope', sans-serif;
+    --hand:'Caveat', cursive;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+
+  *{
+    box-sizing:border-box;
+  }
+
+  html{
+    scroll-behavior:smooth;
+  }
+
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:var(--sans);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  img{
+    max-width:100%;
+    display:block;
+  }
+
+  ::selection{
+    background:#d9afae66;
+    color:var(--maroon-deep);
+  }
+
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+    background:none;
+    color:inherit;
+  }
+
+  a{
+    color:inherit;
+  }
+
+  :focus-visible{
+    outline:2px solid var(--maroon);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+
+  /* =========================
+     LAYOUT
+  ========================= */
+
+  .section{
+    position:relative;
+    width:100%;
+    padding:7rem 1.5rem;
+  }
+
+  @media(min-width:640px){
+    .section{
+      padding:8rem 2.5rem;
+    }
+  }
+
+  .section-inner{
+    margin:0 auto;
+    width:100%;
+  }
+
+  .w-narrow{
+    max-width:42rem;
+  }
+
+  .w-wide{
+    max-width:64rem;
+  }
+
+  .tone-paper{
+    background:var(--paper);
+  }
+
+  .center{
+    text-align:center;
+  }
+
+  h1,h2,h3{
+    font-family:var(--serif);
+    font-weight:500;
+    margin:0;
+  }
+
+  p{
+    margin:0;
+    line-height:1.7;
+  }
+
+  /* =========================
+     REVEAL
+  ========================= */
+
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:
+      opacity 1s var(--ease),
+      transform 1s var(--ease);
+  }
+
+  .reveal.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .reveal-word{
+    opacity:0;
+    transform:translateY(12px);
+    display:inline-block;
+    transition:
+      opacity .6s var(--ease),
+      transform .6s var(--ease);
+  }
+
+  .reveal-word.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    html{
+      scroll-behavior:auto;
+    }
+
+    *,
+    *::before,
+    *::after{
+      animation-duration:.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:.001ms !important;
+    }
+  }
+
+  /* =========================
+     FILM GRAIN
+  ========================= */
+
+  .grain-overlay{
+    pointer-events:none;
+    position:fixed;
+    inset:0;
+    z-index:40;
+    opacity:.05;
+    mix-blend-mode:multiply;
+
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+
+    background-size:180px 180px;
+    animation:grain 8s steps(8) infinite;
+  }
+
+  @keyframes grain{
+    0%,100%{
+      transform:translate(0,0);
+    }
+
+    10%{
+      transform:translate(-1%,-2%);
+    }
+
+    30%{
+      transform:translate(2%,1%);
+    }
+
+    50%{
+      transform:translate(-1%,2%);
+    }
+
+    70%{
+      transform:translate(1%,-1%);
+    }
+
+    90%{
+      transform:translate(-2%,1%);
+    }
+  }
+
+  /* =========================
+     FLOATING DECORATIONS
+  ========================= */
+
+  .decorations{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+
+  .deco{
+    position:absolute;
+    animation:drift 9s ease-in-out infinite;
+  }
+
+  .deco.slow{
+    animation-duration:14s;
+  }
+
+  @keyframes drift{
+    0%,100%{
+      transform:translate(0,0);
+    }
+
+    50%{
+      transform:translate(6px,-14px);
+    }
+  }
+
+  /* =========================
+     NAVIGATION
+  ========================= */
+
+  .nav-pill{
+    position:fixed;
+    top:1.5rem;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:30;
+
+    display:none;
+    align-items:center;
+    gap:.25rem;
+
+    border-radius:999px;
+    border:1px solid rgba(107,44,62,.1);
+    background:rgba(250,246,239,.8);
+
+    padding:.5rem;
+
+    box-shadow:
+      0 8px 30px -14px rgba(58,46,40,.35);
+
+    backdrop-filter:blur(8px);
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:
+      opacity .5s var(--ease),
+      transform .5s var(--ease);
+  }
+
+  .nav-pill.visible{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  @media(min-width:640px){
+    .nav-pill{
+      display:flex;
+    }
+  }
+
+  .nav-pill button{
+    padding:.5rem 1rem;
+    border-radius:999px;
+    font-size:.75rem;
+    color:var(--rose);
+    transition:.3s;
+  }
+
+  .nav-pill button:hover{
+    color:var(--maroon);
+    background:rgba(217,175,174,.2);
+  }
+
+  .nav-mobile{
+    position:fixed;
+    top:1rem;
+    right:1rem;
+    z-index:30;
+  }
+
+  @media(min-width:640px){
+    .nav-mobile{
+      display:none;
+    }
+  }
+
+  .nav-toggle{
+    width:44px;
+    height:44px;
+    border-radius:999px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid rgba(107,44,62,.1);
+    background:rgba(250,246,239,.85);
+    color:var(--maroon);
+
+    box-shadow:
+      0 8px 24px -12px rgba(58,46,40,.4);
+
+    backdrop-filter:blur(8px);
+
+    opacity:0;
+    transform:scale(.9);
+    pointer-events:none;
+
+    transition:.35s;
+  }
+
+  .nav-toggle.visible{
+    opacity:1;
+    transform:scale(1);
+    pointer-events:auto;
+  }
+
+  .nav-menu{
+    display:none;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:.25rem;
+
+    border-radius:1rem;
+    border:1px solid rgba(107,44,62,.1);
+    background:rgba(250,246,239,.97);
+
+    padding:.75rem;
+
+    box-shadow:
+      0 16px 40px -16px rgba(58,46,40,.45);
+
+    backdrop-filter:blur(8px);
+  }
+
+  .nav-menu.open{
+    display:flex;
+  }
+
+  .nav-menu button{
+    width:100%;
+    text-align:right;
+    padding:.5rem .75rem;
+    border-radius:.5rem;
+    font-size:.9rem;
+    color:var(--rose);
+  }
+
+  .nav-menu button:hover{
+    background:rgba(217,175,174,.15);
+    color:var(--maroon);
+  }
+
+  .nav-close{
+    align-self:flex-end;
+    width:32px;
+    height:32px;
+    border-radius:999px;
+    color:var(--rose);
+    margin-bottom:.25rem;
+  }
+
+  /* =========================
+     BUTTONS
+  ========================= */
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+
+    border-radius:999px;
+    padding:.85rem 2rem;
+
+    font-size:.9rem;
+    letter-spacing:.02em;
+
+    transition:all .5s var(--ease);
+  }
+
+  .btn-primary{
+    background:var(--maroon);
+    color:var(--ivory);
+
+    box-shadow:
+      0 8px 30px -10px rgba(107,44,62,.55);
+  }
+
+  .btn-primary:hover{
+    background:var(--maroon-deep);
+
+    box-shadow:
+      0 10px 36px -8px rgba(107,44,62,.65);
+
+    transform:translateY(-2px);
+  }
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--maroon);
+    border:1px solid rgba(107,44,62,.3);
+  }
+
+  .btn-ghost:hover{
+    border-color:rgba(107,44,62,.6);
+  }
+
+  .btn-open{
+    gap:0;
+    padding:.85rem .85rem .85rem 1.75rem;
+    justify-content:space-between;
+    min-width:11rem;
+  }
+
+  .btn-open .arrow-chip{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:2rem;
+    height:2rem;
+
+    border-radius:999px;
+    background:rgba(250,246,239,.16);
+
+    margin-left:1rem;
+  }
+
+  /* =========================
+     HERO
+  ========================= */
+
+  .hero{
+    min-height:100svh;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+    overflow:hidden;
+
+    background:
+      linear-gradient(
+        180deg,
+        #FDFAF5,
+        #F7EFE4
+      );
+
+    padding:1.5rem;
+  }
+
+  .hero-ring{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    width:min(70vh,700px);
+    height:min(70vh,700px);
+
+    transform:translate(-50%,-50%);
+
+    border-radius:50%;
+    border:1px solid rgba(58,46,40,.14);
+
+    pointer-events:none;
+  }
+
+  .hero-blob{
+    position:absolute;
+
+    left:-13vw;
+    top:58%;
+
+    transform:translateY(-50%);
+
+    width:min(46vw,340px);
+    height:min(46vw,340px);
+
+    border-radius:50%;
+
+    background:var(--blush);
+    opacity:.6;
+
+    pointer-events:none;
+  }
+
+  .hero-content{
+    position:relative;
+    z-index:10;
+
+    max-width:30rem;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    text-align:center;
+
+    transition:
+      opacity .6s var(--ease),
+      transform .6s var(--ease);
+  }
+
+  .hero-content.opening{
+    opacity:0;
+    transform:scale(.96) translateY(-16px);
+  }
+
+  .hero-tag{
+    font-family:var(--sans);
+    font-size:.7rem;
+    font-weight:600;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--maroon);
+
+    margin-bottom:1.1rem;
+
+    opacity:0;
+    transform:translateY(14px);
+
+    animation:
+      fadeUp 1s var(--ease) .2s forwards;
+  }
+
+  .hero h1{
+    font-size:2.75rem;
+    font-style:italic;
+    color:var(--ink);
+
+    opacity:0;
+    transform:translateY(20px);
+
+    animation:
+      fadeUp 1s var(--ease) .4s forwards;
+  }
+
+  @media(min-width:640px){
+    .hero h1{
+      font-size:3.5rem;
+    }
+  }
+
+  @media(min-width:768px){
+    .hero h1{
+      font-size:4rem;
+    }
+  }
+
+  .hero .sub{
+    margin-top:1.25rem;
+    max-width:24rem;
+
+    color:var(--rose);
+    font-size:1rem;
+
+    opacity:0;
+    transform:translateY(20px);
+
+    animation:
+      fadeUp 1s var(--ease) .7s forwards;
+  }
+
+  @media(min-width:640px){
+    .hero .sub{
+      font-size:1.05rem;
+    }
+  }
+
+  .hero .cta-wrap{
+    margin-top:2.75rem;
+
+    opacity:0;
+    transform:translateY(20px);
+
+    animation:
+      fadeUp 1s var(--ease) 1.05s forwards;
+  }
+
+  @keyframes fadeUp{
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
+  }
+
+  .scroll-cue{
+    position:absolute;
+
+    bottom:2.5rem;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:1px;
+    height:2.5rem;
+
+    background:rgba(139,114,103,.5);
+
+    animation:
+      cue 2.6s ease-in-out infinite 2s;
+  }
+
+  @keyframes cue{
+    0%,100%{
+      opacity:0;
+    }
+
+    50%{
+      opacity:.5;
+    }
+  }
+
+  /* =========================
+     LETTER
+  ========================= */
+
+  .letter-card{
+    position:relative;
+
+    border-radius:2px;
+    border:1px solid rgba(58,46,40,.05);
+
+    background:var(--ivory);
+
+    padding:3rem 1.75rem;
+
+    box-shadow:
+      0 30px 60px -30px rgba(58,46,40,.35);
+
+    background-image:
+      radial-gradient(
+        circle at 20% 20%,
+        rgba(107,44,62,.035),
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 80% 60%,
+        rgba(107,44,62,.03),
+        transparent 45%
+      );
+  }
+
+  @media(min-width:640px){
+    .letter-card{
+      padding:4rem 3.5rem;
+    }
+  }
+
+  .letter-flower{
+    position:absolute;
+    top:-1rem;
+    left:2rem;
+    opacity:.7;
+  }
+
+  .letter-body{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:1.4rem;
+    line-height:1.75;
+    color:rgba(58,46,40,.9);
+  }
+
+  @media(min-width:640px){
+    .letter-body{
+      font-size:1.7rem;
+    }
+  }
+
+  .letter-annotation{
+    margin-top:2rem;
+    text-align:right;
+
+    font-family:var(--hand);
+    font-size:1.4rem;
+
+    color:rgba(107,44,62,.8);
+  }
+
+  /* =========================
+     GALLERY
+  ========================= */
+
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+
+    gap:1.25rem;
+
+    margin-top:4rem;
+  }
+
+  @media(min-width:640px){
+    .gallery{
+      grid-template-columns:repeat(12,1fr);
+      gap:2.5rem 1.5rem;
+    }
+  }
+
+  .g-item{
+    grid-column:span 4;
+
+    border-radius:2px;
+
+    background:var(--ivory);
+
+    padding:.65rem .65rem 2rem;
+
+    text-align:left;
+
+    box-shadow:
+      0 18px 36px -18px rgba(58,46,40,.4);
+
+    transition:
+      box-shadow .5s var(--ease),
+      transform .3s var(--ease);
+  }
+
+  @media(min-width:640px){
+    .g-item{
+      padding:.75rem .75rem 2.25rem;
+    }
+  }
+
+  .g-item:hover{
+    box-shadow:
+      0 24px 48px -16px rgba(58,46,40,.5);
+
+    transform:translateY(-6px);
+  }
+
+  .g-item .frame{
+    overflow:hidden;
+    border-radius:1px;
+    background:var(--paper);
+  }
+
+  .g-item img{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:
+      transform .7s ease-out;
+
+    aspect-ratio:var(--ar,4/5);
+  }
+
+  .g-item:hover img{
+    transform:scale(1.04);
+  }
+
+  .g-item .cap{
+    display:block;
+
+    margin-top:.6rem;
+
+    font-family:var(--hand);
+    font-size:1.1rem;
+
+    color:rgba(58,46,40,.7);
+  }
+
+  @media(min-width:640px){
+    .g-portrait{
+      grid-column:span 4;
+    }
+
+    .g-landscape{
+      grid-column:span 6;
+    }
+
+    .g-square{
+      grid-column:span 4;
+    }
+  }
+
+  /* =========================
+     LIGHTBOX
+  ========================= */
+
+  .lightbox{
+    position:fixed;
+    inset:0;
+    z-index:50;
+
+    background:rgba(58,46,40,.85);
+
+    backdrop-filter:blur(4px);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:
+      opacity .35s var(--ease);
+  }
+
+  .lightbox.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .lightbox-close{
+    position:absolute;
+
+    top:1.25rem;
+    right:1.25rem;
+
+    width:44px;
+    height:44px;
+
+    border-radius:999px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid rgba(250,246,239,.2);
+
+    color:rgba(250,246,239,.9);
+  }
+
+  .lightbox-close:hover{
+    background:rgba(250,246,239,.1);
+  }
+
+  .lightbox figure{
+    margin:0 1.5rem;
+
+    max-width:48rem;
+    max-height:85vh;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    transform:scale(.94) translateY(16px);
+    opacity:0;
+
+    transition:
+      transform .4s var(--ease),
+      opacity .4s var(--ease);
+  }
+
+  .lightbox.open figure{
+    transform:scale(1) translateY(0);
+    opacity:1;
+  }
+
+  .lightbox img{
+    max-height:75vh;
+    max-width:100%;
+
+    border-radius:2px;
+
+    box-shadow:
+      0 25px 60px rgba(0,0,0,.4);
+  }
+
+  .lightbox figcaption{
+    margin-top:1.25rem;
+
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:1.15rem;
+
+    color:rgba(250,246,239,.9);
+
+    text-align:center;
+  }
+
+  /* =========================
+     FINAL MESSAGE
+  ========================= */
+
+  .final-wrap{
+    min-height:80svh;
+    display:flex;
+    align-items:center;
+  }
+
+  .final-inner{
+    position:relative;
+
+    min-height:50vh;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    width:100%;
+  }
+
+  .final-glow{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    width:18rem;
+    height:18rem;
+
+    transform:translate(-50%,-50%);
+
+    border-radius:999px;
+
+    background:rgba(217,175,174,.3);
+
+    filter:blur(100px);
+
+    opacity:0;
+
+    transition:opacity 1.6s;
+
+    pointer-events:none;
+  }
+
+  .final-glow.is-visible{
+    opacity:.5;
+  }
+
+  .final-line1{
+    position:relative;
+
+    font-size:1.9rem;
+    font-weight:500;
+    line-height:1.35;
+
+    color:var(--ink);
+  }
+
+  @media(min-width:640px){
+    .final-line1{
+      font-size:2.4rem;
+    }
+  }
+
+  @media(min-width:768px){
+    .final-line1{
+      font-size:2.9rem;
+    }
+  }
+
+  .final-line2{
+    position:relative;
+
+    margin-top:2rem;
+    max-width:26rem;
+
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:1.35rem;
+
+    color:rgba(107,44,62,.85);
+
+    opacity:0;
+    transform:translateY(16px);
+
+    transition:
+      opacity 1s var(--ease) 1.1s,
+      transform 1s var(--ease) 1.1s;
+  }
+
+  @media(min-width:640px){
+    .final-line2{
+      font-size:1.5rem;
+    }
+  }
+
+  .final-line2.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* =========================
+     FOOTER
+  ========================= */
+
+  footer{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    gap:2rem;
+
+    padding:6rem 1.5rem;
+
+    text-align:center;
+  }
+
+  .footer-line{
+    max-width:20rem;
+
+    font-family:var(--hand);
+    font-size:1.5rem;
+
+    color:var(--rose);
+  }
+
+  @media(min-width:640px){
+    .footer-line{
+      font-size:1.75rem;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     BACKGROUND MUSIC
+========================= -->
+
+<audio id="bgMusic" preload="auto" loop>
+  <source src="LAGU.mp3" type="audio/mpeg">
+</audio>
+
+<div class="grain-overlay" aria-hidden="true"></div>
+
+
+<!-- =========================
+     NAVIGATION
+========================= -->
+
+<nav
+  class="nav-pill"
+  id="navPill"
+  aria-label="Section navigation"
+>
+
+  <button data-scroll="home">
+    Home
+  </button>
+
+  <button data-scroll="letter">
+    Letter
+  </button>
+
+  <button data-scroll="moments">
+    Moments
+  </button>
+
+  <button data-scroll="one-last-thing">
+    One Last Thing
+  </button>
+
+</nav>
+
+
+<!-- MOBILE NAV -->
+
+<div class="nav-mobile">
+
+  <button
+    class="nav-toggle"
+    id="navToggle"
+    aria-label="Open navigation"
+  >
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+    >
+      <line x1="4" y1="7" x2="20" y2="7"/>
+      <line x1="4" y1="12" x2="20" y2="12"/>
+      <line x1="4" y1="17" x2="20" y2="17"/>
+    </svg>
+  </button>
+
+  <div
+    class="nav-menu"
+    id="navMenu"
+    role="menu"
+  >
+
+    <button
+      class="nav-close"
+      id="navClose"
+      aria-label="Close navigation"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+      >
+        <line x1="5" y1="5" x2="19" y2="19"/>
+        <line x1="19" y1="5" x2="5" y2="19"/>
+      </svg>
+    </button>
+
+    <button
+      data-scroll="home"
+      role="menuitem"
+    >
+      Home
+    </button>
+
+    <button
+      data-scroll="letter"
+      role="menuitem"
+    >
+      Letter
+    </button>
+
+    <button
+      data-scroll="moments"
+      role="menuitem"
+    >
+      Moments
+    </button>
+
+    <button
+      data-scroll="one-last-thing"
+      role="menuitem"
+    >
+      One Last Thing
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section
+  class="hero"
+  id="home"
+>
+
+  <div
+    class="hero-ring"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="hero-blob"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="decorations"
+    aria-hidden="true"
+  >
+
+    <div
+      class="deco slow"
+      style="top:13%;left:12%;opacity:.55;"
+    >
+
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#D9AFAE"
+      >
+
+        <path
+          d="M12 20.5c-.3 0-.6-.1-.8-.3-2-1.7-3.8-3.3-5.3-4.9C3.5 12.7 2 10.6 2 8.3 2 5.9 3.9 4 6.3 4c1.4 0 2.7.7 3.5 1.8L12 8l2.2-2.2C15 4.7 16.3 4 17.7 4 20.1 4 22 5.9 22 8.3c0 2.3-1.5 4.4-3.9 6.9-1.5 1.6-3.3 3.2-5.3 4.9-.2.2-.5.4-.8.4Z"
+          stroke-width="1.1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <div
+      class="deco"
+      style="top:19%;left:83%;opacity:.55;animation-delay:1.2s;"
+    >
+
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="#D9AFAE"
+      >
+
+        <path
+          d="M12 2.5c.5 3.6 1.3 5.9 2.6 7.4 1.4 1.4 3.7 2.2 7.4 2.6-3.6.5-5.9 1.3-7.4 2.6-1.4 1.4-2.2 3.7-2.6 7.4-.5-3.6-1.3-5.9-2.6-7.4C7.9 13.7 5.6 13 2 12.5c3.6-.5 5.9-1.3 7.4-2.6C10.7 8.4 11.5 6.1 12 2.5Z"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <div
+      class="deco slow"
+      style="top:74%;left:21%;opacity:.4;animation-delay:2.1s;"
+    >
+
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#D9AFAE"
+      >
+
+        <path
+          d="M12 20.5c-.3 0-.6-.1-.8-.3-2-1.7-3.8-3.3-5.3-4.9C3.5 12.7 2 10.6 2 8.3 2 5.9 3.9 4 6.3 4c1.4 0 2.7.7 3.5 1.8L12 8l2.2-2.2C15 4.7 16.3 4 17.7 4 20.1 4 22 5.9 22 8.3c0 2.3-1.5 4.4-3.9 6.9-1.5 1.6-3.3 3.2-5.3 4.9-.2.2-.5.4-.8.4Z"
+          stroke-width="1.1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+      </svg>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="hero-content"
+    id="heroContent"
+  >
+
+    <p class="hero-tag">
+      For someone very special
+    </p>
+
+    <h1>
+      Hey, you.
+    </h1>
+
+    <p class="sub">
+      I made a little place on the internet just for you.
+    </p>
+
+    <div class="cta-wrap">
+
+      <button
+        class="btn btn-primary btn-open"
+        id="openLetterBtn"
+        aria-label="Open the letter"
+      >
+
+        <span>
+          Open this ♡
+        </span>
+
+        <span class="arrow-chip">
+
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line
+              x1="12"
+              y1="5"
+              x2="12"
+              y2="19"
+            />
+
+            <polyline
+              points="6 13 12 19 18 13"
+            />
+
+          </svg>
+
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="scroll-cue"
+    aria-hidden="true"
+  ></div>
+
+</section>
+
+
+<!-- =========================
+     LETTER
+========================= -->
+
+<section
+  class="section tone-paper"
+  id="letter"
+>
+
+  <div class="section-inner w-narrow">
+
+    <h2
+      class="reveal center"
+      style="font-size:2.5rem;margin-bottom:2.5rem;"
+    >
+      A Letter for youuu
+    </h2>
+
+
+    <div class="letter-card reveal">
+
+      <svg
+        class="letter-flower"
+        width="30"
+        height="30"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#D9AFAE"
+        stroke-width="1.1"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+
+        <circle
+          cx="12"
+          cy="12"
+          r="1.6"
+          fill="#D9AFAE"
+          stroke="none"
+        />
+
+        <path
+          d="M12 9.5c0-2.2-1-3.8-2.2-4.8"
+        />
+
+        <path
+          d="M12 9.5c0-2.2-1-3.8 2.2-4.8"
+        />
+
+        <path
+          d="M14.5 12c2.2 0 3.8-1 4.8-2.2"
+        />
+
+        <path
+          d="M9.5 12c-2.2 0-3.8-1-4.8-2.2"
+        />
+
+      </svg>
+
+
+      <p class="letter-body">
+        akuuu sayaaaanggggg bangettt samaaaa kakaaaa.
+        mungkin akuuu nggaa selaluu bisaaaa ngungkapinnyaaaa,
+        tapiiiii kakaaa ituuuu bener-bener berartiiii bangett
+        buat akuuuu anjayyy.
+        aku nyaman bangettt sama kakaaa,
+        dan akuuu bersyukur bisa kenal dan punya kakaaaa
+        di my hidup life aku saya guaa 😙.
+        aku cuma pengen kakaaa tauu,
+        sayang akuu ke kakaaa itu tulussss bangettt
+        from lubuk hati terdalamm sedalam dalamnya dalammm
+        😙😙.
+      </p>
+
+
+      <p class="letter-annotation">
+        — abyann sayanggg uisss
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     MOMENTS
+========================= -->
+
+<section
+  class="section"
+  id="moments"
+>
+
+  <div class="section-inner w-wide">
+
+    <h2
+      class="reveal center"
+      style="font-size:2.5rem;"
+    >
+      Our Little Moments
+    </h2>
+
+
+    <p
+      class="reveal center"
+      style="max-width:24rem;margin:1rem auto 0;color:var(--rose);font-size:.95rem;"
+    >
+      A few small things I didn't want to lose.
+    </p>
+
+
+    <div
+      class="gallery"
+      id="gallery"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     LIGHTBOX
+========================= -->
+
+<div
+  class="lightbox"
+  id="lightbox"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Photo view"
+>
+
+  <button
+    class="lightbox-close"
+    id="lightboxClose"
+    aria-label="Close image"
+  >
+
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+    >
+
+      <line
+        x1="5"
+        y1="5"
+        x2="19"
+        y2="19"
+      />
+
+      <line
+        x1="19"
+        y1="5"
+        x2="5"
+        y2="19"
+      />
+
+    </svg>
+
+  </button>
+
+
+  <figure id="lightboxFigure">
+
+    <img
+      id="lightboxImg"
+      src=""
+      alt=""
+    />
+
+    <figcaption
+      id="lightboxCaption"
+    ></figcaption>
+
+  </figure>
+
+</div>
+
+
+<!-- =========================
+     ONE LAST THING
+========================= -->
+
+<section
+  class="section final-wrap"
+  id="one-last-thing"
+>
+
+  <div
+    class="section-inner w-narrow final-inner"
+  >
+
+    <div
+      class="final-glow"
+      id="finalGlow"
+      aria-hidden="true"
+    ></div>
+
+
+    <h2
+      class="final-line1"
+      id="finalLine1"
+    ></h2>
+
+
+    <p
+      class="final-line2"
+      id="finalLine2"
+    >
+      And if you ever wonder… yes, you still mean a lot to me. ♡
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+  <p class="footer-line reveal">
+    Made with a little bit of courage and a lot of feelings.
+  </p>
+
+
+  <button
+    class="btn btn-ghost reveal"
+    id="replayBtn"
+  >
+    Replay ↻
+  </button>
+
+</footer>
+
+
+<script>
+(function(){
+
+  "use strict";
+
+
+  /* =========================
+     SETTINGS
+  ========================= */
+
+  var reduceMotion =
+    window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+  /* =========================
+     BACKGROUND MUSIC
+  ========================= */
+
+  var bgMusic =
+    document.getElementById("bgMusic");
+
+  bgMusic.volume = 0.8;
+
+
+  /*
+    Try to start music immediately.
+
+    Some browsers block autoplay
+    when there has been no user interaction.
+  */
+
+  bgMusic.play().catch(function(){
+
+    console.log(
+      "Autoplay diblokir browser. Musik akan dimulai setelah interaksi pertama."
+    );
+
+  });
+
+
+  /*
+    Fallback:
+    if autoplay is blocked,
+    first click / touch / keyboard
+    will start the music.
+  */
+
+  function startMusic(){
+
+    bgMusic.play().catch(function(){});
+
+  }
+
+
+  document.addEventListener(
+    "click",
+    startMusic,
+    { once:true }
+  );
+
+
+  document.addEventListener(
+    "touchstart",
+    startMusic,
+    { once:true }
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    startMusic,
+    { once:true }
+  );
+
+
+  /* =========================
+     CONTENT DATA
+  ========================= */
+
+  var memories = [
+
+    {
+      image:"1.jpeg",
+      caption:"this one still makes me smile.",
+      orientation:"portrait"
+    },
+
+    {
+      image:"2.jpeg",
+      caption:"yangg depann gantengg bangett kann.",
+      orientation:"landscape"
+    },
+
+    {
+      image:"3.jpeg",
+      caption:"wish we could go back here.",
+      orientation:"square"
+    },
+
+    {
+      image:"4.jpeg",
+      caption:"this one still makes me smile.",
+      orientation:"landscape"
+    },
+
+    {
+      image:"5.jpeg",
+      caption:"one of my favorite memories.",
+      orientation:"portrait"
+    },
+
+    {
+      image:"6.jpeg",
+      caption:"imutt dehh 😙😙.",
+      orientation:"square"
+    }
+
+  ];
+
+
+  /* =========================
+     GALLERY
+  ========================= */
+
+  var galleryEl =
+    document.getElementById("gallery");
+
+
+  var arByOrientation = {
+
+    portrait:"4/5",
+    landscape:"4/3",
+    square:"1/1"
+
+  };
+
+
+  var classByOrientation = {
+
+    portrait:"g-portrait",
+    landscape:"g-landscape",
+    square:"g-square"
+
+  };
+
+
+  var offsets = [
+
+    "",
+    "translateY(2.5rem)",
+    "translateY(-1rem)",
+    "translateY(1.5rem)",
+    "translateY(-2rem)",
+    "translateY(.5rem)"
+
+  ];
+
+
+  var rotations = [
+
+    "-1deg",
+    "1deg",
+    "-1deg",
+    "2deg",
+    "-2deg",
+    "1deg"
+
+  ];
+
+
+  memories.forEach(function(m,i){
+
+    var btn =
+      document.createElement("button");
+
+
+    btn.className =
+      "g-item reveal " +
+      classByOrientation[m.orientation];
+
+
+    btn.setAttribute(
+      "aria-label",
+      "Open photo: " + m.caption
+    );
+
+
+    btn.style.setProperty(
+      "--ar",
+      arByOrientation[m.orientation]
+    );
+
+
+    if(
+      window.innerWidth >= 640 &&
+      !reduceMotion
+    ){
+
+      btn.style.transform =
+        offsets[i % offsets.length] +
+        " rotate(" +
+        rotations[i % rotations.length] +
+        ")";
+
+    }
+
+
+    btn.innerHTML =
+
+      '<span class="frame">' +
+
+        '<img ' +
+        'src="' + m.image + '" ' +
+        'alt="' + m.caption + '" ' +
+        'loading="lazy" />' +
+
+      '</span>' +
+
+      '<span class="cap">' +
+        m.caption +
+      '</span>';
+
+
+    btn.addEventListener(
+      "click",
+      function(){
+
+        openLightbox(m);
+
+      }
+    );
+
+
+    galleryEl.appendChild(btn);
+
+  });
+
+
+  /* =========================
+     REVEAL ON SCROLL
+  ========================= */
+
+  var revealEls =
+    document.querySelectorAll(".reveal");
+
+
+  if(
+    "IntersectionObserver" in window
+  ){
+
+    var io =
+      new IntersectionObserver(
+        function(entries){
+
+          entries.forEach(function(entry){
+
+            if(entry.isIntersecting){
+
+              entry.target.classList.add(
+                "is-visible"
+              );
+
+              io.unobserve(
+                entry.target
+              );
+
+            }
+
+          });
+
+        },
+        {
+          threshold:0.25
+        }
+      );
+
+
+    revealEls.forEach(function(el){
+
+      io.observe(el);
+
+    });
+
+  }else{
+
+    revealEls.forEach(function(el){
+
+      el.classList.add(
+        "is-visible"
+      );
+
+    });
+
+  }
+
+
+  /* =========================
+     FINAL MESSAGE
+  ========================= */
+
+  var finalLine1El =
+    document.getElementById(
+      "finalLine1"
+    );
+
+
+  var line1Text =
+    "Whatever happens next, thank you for being a part of my story.";
+
+
+  finalLine1El.innerHTML =
+    line1Text
+      .split(" ")
+      .map(function(word,i){
+
+        return (
+
+          '<span ' +
+          'class="reveal-word" ' +
+          'style="transition-delay:' +
+          (i * 0.045) +
+          's">' +
+
+          word +
+
+          "&nbsp;</span>"
+
+        );
+
+      })
+      .join("");
+
+
+  var finalGlow =
+    document.getElementById(
+      "finalGlow"
+    );
+
+
+  var finalLine2 =
+    document.getElementById(
+      "finalLine2"
+    );
+
+
+  var finalWords =
+    finalLine1El.querySelectorAll(
+      ".reveal-word"
+    );
+
+
+  if(
+    "IntersectionObserver" in window
+  ){
+
+    var finalIo =
+      new IntersectionObserver(
+        function(entries){
+
+          entries.forEach(function(entry){
+
+            if(entry.isIntersecting){
+
+              finalWords.forEach(
+                function(w){
+
+                  w.classList.add(
+                    "is-visible"
+                  );
+
+                }
+              );
+
+
+              finalGlow.classList.add(
+                "is-visible"
+              );
+
+
+              finalLine2.classList.add(
+                "is-visible"
+              );
+
+
+              finalIo.unobserve(
+                entry.target
+              );
+
+            }
+
+          });
+
+        },
+        {
+          threshold:0.4
+        }
+      );
+
+
+    finalIo.observe(
+      document.getElementById(
+        "one-last-thing"
+      )
+    );
+
+  }else{
+
+    finalWords.forEach(function(w){
+
+      w.classList.add(
+        "is-visible"
+      );
+
+    });
+
+
+    finalGlow.classList.add(
+      "is-visible"
+    );
+
+
+    finalLine2.classList.add(
+      "is-visible"
+    );
+
+  }
+
+
+  /* =========================
+     NAVIGATION
+  ========================= */
+
+  var navPill =
+    document.getElementById(
+      "navPill"
+    );
+
+
+  var navToggle =
+    document.getElementById(
+      "navToggle"
+    );
+
+
+  var navMenu =
+    document.getElementById(
+      "navMenu"
+    );
+
+
+  var navClose =
+    document.getElementById(
+      "navClose"
+    );
+
+
+  function updateNavVisibility(){
+
+    var visible =
+      window.scrollY >
+      window.innerHeight * 0.6;
+
+
+    navPill.classList.toggle(
+      "visible",
+      visible
+    );
+
+
+    navToggle.classList.toggle(
+      "visible",
+      visible
+    );
+
+
+    if(!visible){
+
+      navMenu.classList.remove(
+        "open"
+      );
+
+    }
+
+  }
+
+
+  window.addEventListener(
+    "scroll",
+    updateNavVisibility,
+    {
+      passive:true
+    }
+  );
+
+
+  updateNavVisibility();
+
+
+  navToggle.addEventListener(
+    "click",
+    function(){
+
+      navMenu.classList.add(
+        "open"
+      );
+
+    }
+  );
+
+
+  navClose.addEventListener(
+    "click",
+    function(){
+
+      navMenu.classList.remove(
+        "open"
+      );
+
+    }
+  );
+
+
+  document
+    .querySelectorAll("[data-scroll]")
+    .forEach(function(btn){
+
+      btn.addEventListener(
+        "click",
+        function(){
+
+          var id =
+            btn.getAttribute(
+              "data-scroll"
+            );
+
+
+          var target =
+            document.getElementById(
+              id
+            );
+
+
+          if(target){
+
+            target.scrollIntoView({
+
+              behavior:
+                reduceMotion
+                  ? "auto"
+                  : "smooth"
+
+            });
+
+          }
+
+
+          navMenu.classList.remove(
+            "open"
+          );
+
+        }
+      );
+
+    });
+
+
+  /* =========================
+     HERO OPEN BUTTON
+  ========================= */
+
+  var heroContent =
+    document.getElementById(
+      "heroContent"
+    );
+
+
+  document
+    .getElementById("openLetterBtn")
+    .addEventListener(
+      "click",
+      function(){
+
+        /*
+          Make absolutely sure music
+          starts when the user clicks.
+        */
+
+        bgMusic.play().catch(
+          function(){}
+        );
+
+
+        heroContent.classList.add(
+          "opening"
+        );
+
+
+        window.setTimeout(
+          function(){
+
+            document
+              .getElementById("letter")
+              .scrollIntoView({
+
+                behavior:
+                  reduceMotion
+                    ? "auto"
+                    : "smooth"
+
+              });
+
+          },
+          reduceMotion
+            ? 0
+            : 550
+        );
+
+      }
+    );
+
+
+  /* =========================
+     REPLAY
+  ========================= */
+
+  document
+    .getElementById("replayBtn")
+    .addEventListener(
+      "click",
+      function(){
+
+        document
+          .getElementById("home")
+          .scrollIntoView({
+
+            behavior:
+              reduceMotion
+                ? "auto"
+                : "smooth"
+
+          });
+
+      }
+    );
+
+
+  /* =========================
+     LIGHTBOX
+  ========================= */
+
+  var lightbox =
+    document.getElementById(
+      "lightbox"
+    );
+
+
+  var lightboxImg =
+    document.getElementById(
+      "lightboxImg"
+    );
+
+
+  var lightboxCaption =
+    document.getElementById(
+      "lightboxCaption"
+    );
+
+
+  var lightboxFigure =
+    document.getElementById(
+      "lightboxFigure"
+    );
+
+
+  function openLightbox(m){
+
+    lightboxImg.src =
+      m.image;
+
+
+    lightboxImg.alt =
+      m.caption;
+
+
+    lightboxCaption.textContent =
+      m.caption;
+
+
+    lightbox.classList.add(
+      "open"
+    );
+
+
+    document.body.style.overflow =
+      "hidden";
+
+  }
+
+
+  function closeLightbox(){
+
+    lightbox.classList.remove(
+      "open"
+    );
+
+
+    document.body.style.overflow =
+      "";
+
+  }
+
+
+  document
+    .getElementById("lightboxClose")
+    .addEventListener(
+      "click",
+      closeLightbox
+    );
+
+
+  lightbox.addEventListener(
+    "click",
+    function(e){
+
+      if(
+        e.target === lightbox
+      ){
+
+        closeLightbox();
+
+      }
+
+    }
+  );
+
+
+  lightboxFigure.addEventListener(
+    "click",
+    function(e){
+
+      e.stopPropagation();
+
+    }
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key === "Escape" &&
+        lightbox.classList.contains(
+          "open"
+        )
+      ){
+
+        closeLightbox();
+
+      }
+
+    }
+  );
+
+})();
+</script>
+
+</body>
+</html>
